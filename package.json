@@ -1,0 +1,22 @@
+﻿{
+  "name": "mail2devops-outlook-addin",
+  "version": "1.0.0",
+  "description": "Outlook Add-in: E-Mail-Verläufe oder Ausschnitte als Diskussion an Azure DevOps Work Items anhängen",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "certs": "office-addin-dev-certs install",
+    "start": "node scripts/serve.mjs",
+    "sideload": "office-addin-debugging start manifest.xml desktop --app outlook --no-debug --dev-server \"node scripts/serve.mjs\" --dev-server-port 3000",
+    "stop": "office-addin-debugging stop manifest.xml",
+    "validate": "office-addin-manifest validate manifest.xml",
+    "set-url": "node scripts/set-url.mjs",
+    "build": "node scripts/build.mjs",
+    "check-host": "node scripts/check-host.mjs"
+  },
+  "devDependencies": {
+    "office-addin-debugging": "^7.0.1",
+    "office-addin-dev-certs": "^3.0.1",
+    "office-addin-manifest": "^3.0.1"
+  }
+}

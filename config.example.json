@@ -1,0 +1,14 @@
+{
+  "organizations": [
+    { "name": "Contoso Cloud", "url": "https://dev.azure.com/contoso", "defaultProject": "Webshop" },
+    { "name": "Contoso Kunde B", "url": "https://dev.azure.com/kunde-b" },
+    { "name": "On-Prem Server", "url": "https://tfs.contoso.local/tfs/DefaultCollection", "apiVersion": "7.0" }
+  ],
+  "defaults": {
+    "defaultTags": "E-Mail",
+    "defaultContent": "thread",
+    "includeHeader": true,
+    "oldestFirst": true,
+    "transferImages": true
+  }
+}

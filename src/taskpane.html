@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mail2DevOps</title>
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+  <link rel="stylesheet" href="taskpane.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#0078d4"/><path d="M5 8h14v9H5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 8l7 5 7-5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+    <div class="brand"><b>Mail2DevOps</b><span id="mailSubject" class="sub"></span></div>
+    <button id="btnSettings" class="icon-btn" title="Einstellungen" aria-label="Einstellungen">
+      <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    </button>
+  </header>
+  <div id="demoBanner" class="banner hidden">Demo-Modus – ausserhalb von Outlook geöffnet, Daten sind simuliert.</div>
+
+  <!-- ===================================================== HAUPTANSICHT -->
+  <main id="viewMain" class="view">
+    <div id="setupNeeded" class="card empty-state hidden">
+      <h2>Willkommen 👋</h2>
+      <p>Lege zuerst eine Azure DevOps Organisation mit Personal Access Token an.</p>
+      <button id="btnSetup" class="btn primary">Organisation hinzufügen</button>
+    </div>
+
+    <div id="linkedHint" class="notice hidden"></div>
+
+    <section class="card" id="cardTarget">
+      <h2><span class="step">1</span> Ziel in Azure DevOps</h2>
+      <div class="grid2">
+        <label>Organisation<select id="selOrg"></select></label>
+        <label>Projekt<select id="selProject"></select></label>
+      </div>
+      <div class="seg" id="segTarget">
+        <button type="button" data-v="existing" class="active">Bestehendes Item</button>
+        <button type="button" data-v="new">Neues Item</button>
+      </div>
+
+      <div id="paneExisting">
+        <div id="wiPicker">
+          <div class="combo">
+            <input id="wiSearch" type="search" placeholder="ID eingeben oder Titel suchen …" autocomplete="off">
+            <select id="wiFilter" title="Filter">
+              <option value="recent">Zuletzt geändert</option>
+              <option value="mine">Mir zugewiesen</option>
+              <option value="created">Von mir erstellt</option>
+            </select>
+          </div>
+          <div id="wiList" class="wi-list" role="listbox"></div>
+        </div>
+        <div id="wiSelected" class="hidden"></div>
+      </div>
+
+      <div id="paneNew" class="hidden">
+        <div class="lbl">Typ</div>
+        <div class="chips" id="typeChips"></div>
+        <label>Titel<input id="newTitle" type="text"></label>
+        <div class="grid2">
+          <label>Übergeordnet (ID)<input id="newParent" type="text" inputmode="numeric" placeholder="optional"></label>
+          <label>Tags<input id="newTags" type="text" placeholder="z.B. E-Mail; Kunde"></label>
+        </div>
+        <label>E-Mail-Inhalt ablegen in
+          <select id="newContentTarget">
+            <option value="comment">Diskussion (Kommentar)</option>
+            <option value="description">Beschreibung</option>
+            <option value="both">Beschreibung + Diskussion</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="newAssignMe"> Mir zuweisen</label>
+      </div>
+    </section>
+
+    <section class="card" id="cardContent">
+      <h2><span class="step">2</span> Was soll übertragen werden?</h2>
+      <div class="seg" id="segContent">
+        <button type="button" data-v="full" class="active">Ganze E-Mail</button>
+        <button type="button" data-v="thread">Verlauf <span id="msgCount" class="badge">1</span></button>
+        <button type="button" data-v="selection">Auswahl <span id="selCount" class="badge">0</span></button>
+      </div>
+      <p class="hint" id="contentHint"></p>
+
+      <div id="threadList" class="thread-list hidden"></div>
+      <div id="snippetList" class="snippet-list hidden"></div>
+      <button id="btnComposeSel" type="button" class="btn secondary small hidden">Markierung aus dem Editor übernehmen</button>
+
+      <details id="previewWrap" open>
+        <summary>Vorschau <span class="muted">– Text markieren und <b>＋ Übernehmen</b> klicken</span></summary>
+        <div id="preview" class="preview" tabindex="0"><div class="loading">E-Mail wird geladen …</div></div>
+      </details>
+
+      <label>Notiz (optional)<textarea id="note" rows="2" placeholder="z.B. Rückmeldung Kunde zum Release …"></textarea></label>
+
+      <details class="options">
+        <summary>Optionen &amp; Anhänge</summary>
+        <label class="check"><input type="checkbox" id="optHeader" checked> Kopfzeile mit Von / An / Datum</label>
+        <label class="check"><input type="checkbox" id="optImages" checked> Eingebettete Bilder übertragen</label>
+        <label class="check"><input type="checkbox" id="optOldestFirst" checked> Verlauf chronologisch posten (älteste zuerst)</label>
+        <label class="check" id="optEmlWrap"><input type="checkbox" id="optEml"> Original-E-Mail als .eml anhängen</label>
+        <div id="attList"></div>
+      </details>
+    </section>
+
+    <div id="result" class="hidden"></div>
+  </main>
+
+  <!-- ===================================================== EINSTELLUNGEN -->
+  <section id="viewSettings" class="view hidden">
+    <div class="settings-head">
+      <button id="btnBack" type="button" class="link">← Zurück</button>
+      <h2>Einstellungen</h2>
+    </div>
+
+    <div class="card">
+      <h3>Azure DevOps Organisationen</h3>
+      <div id="orgList"></div>
+      <button id="btnAddOrg" type="button" class="btn secondary small">＋ Organisation hinzufügen</button>
+    </div>
+
+    <form id="orgForm" class="card hidden" autocomplete="off">
+      <h3 id="orgFormTitle">Organisation</h3>
+      <input type="hidden" id="fId">
+      <label>Anzeigename<input id="fName" type="text" placeholder="z.B. Contoso"></label>
+      <label>Organisations-URL<input id="fUrl" type="text" placeholder="https://dev.azure.com/meine-org" required></label>
+      <label>Personal Access Token<input id="fPat" type="password" autocomplete="new-password" placeholder="PAT einfügen"></label>
+      <p class="hint">Benötigte Scopes: <b>Work Items (Read &amp; Write)</b> und <b>Project and Team (Read)</b>.
+        <a id="patLink" href="https://dev.azure.com" target="_blank" rel="noopener">PAT erstellen ↗</a></p>
+      <label class="check"><input type="checkbox" id="fSyncPat"> PAT geräteübergreifend im Postfach speichern</label>
+      <div class="grid2">
+        <label>Standard-Projekt<select id="fProject"><option value="">– zuletzt verwendetes –</option></select></label>
+        <label>API-Version<select id="fApi"><option value="7.1">7.1 (Cloud)</option><option value="7.0">7.0 (Server 2022)</option><option value="6.0">6.0 (Server 2020)</option></select></label>
+      </div>
+      <div class="row-btns">
+        <button type="button" id="btnTest" class="btn secondary small">Verbindung testen</button>
+        <span class="spacer"></span>
+        <button type="button" id="btnCancelOrg" class="btn link">Abbrechen</button>
+        <button type="submit" class="btn primary small">Speichern</button>
+      </div>
+      <div id="testResult" class="status"></div>
+    </form>
+
+    <div class="card">
+      <h3>Standards</h3>
+      <div class="grid2">
+        <label>Standard-Tags (neue Items)<input id="pTags" type="text"></label>
+        <label>Standard-Inhalt
+          <select id="pContent"><option value="full">Ganze E-Mail</option><option value="thread">Verlauf</option><option value="selection">Auswahl</option></select>
+        </label>
+      </div>
+    </div>
+    <p class="hint small">Organisationen und Einstellungen werden in Ihrem Postfach gespeichert (nur für dieses Add-in lesbar). PATs bleiben standardmässig nur auf diesem Gerät. Es werden keine Daten an Dritte gesendet – nur direkt an Ihre Azure DevOps Organisation.</p>
+  </section>
+
+  <footer class="actionbar" id="actionbar">
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <button id="btnSubmit" type="button" class="btn primary block" disabled>Item auswählen</button>
+  </footer>
+
+  <button id="selFab" type="button" class="fab hidden">＋ Übernehmen</button>
+  <div id="toast" class="toast hidden"></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "$comment": "Optional: vom Admin vorkonfigurierte Organisationen und Standards. Benutzer ergänzen nur noch ihren PAT. Leer lassen, wenn jeder selbst konfiguriert.",
+  "organizations": [],
+  "defaults": {
+    "defaultTags": "E-Mail",
+    "defaultContent": "full",
+    "includeHeader": true,
+    "oldestFirst": true,
+    "transferImages": true
+  }
+}
