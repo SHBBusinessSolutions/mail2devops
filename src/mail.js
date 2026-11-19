@@ -59,11 +59,4 @@ export const officeMail = {
   },
 
   userEmail: () => (Office.context.mailbox.userProfile && Office.context.mailbox.userProfile.emailAddress) || '',
-
-  openUrl(url) {
-    try {
-      if (Office.context.ui && Office.context.ui.openBrowserWindow) return Office.context.ui.openBrowserWindow(url);
-    } catch { /* fallback */ }
-    window.open(url, '_blank', 'noopener');
-  },
 };

@@ -453,7 +453,7 @@ function selectItem(w) {
     $('#wiSelected').innerHTML = `
       <div class="wi-sel">
         ${typeIcon(w.type)}
-        <div class="wi-main"><div class="wi-title"><span class="wi-id">${w.id}</span> ${esc(w.title)}</div><div class="wi-meta">${wiMeta(w)} · <a href="${esc(url)}" target="_blank" rel="noopener" data-open>Öffnen</a></div></div>
+        <div class="wi-main"><div class="wi-title"><span class="wi-id">${w.id}</span> ${esc(w.title)}</div><div class="wi-meta">${wiMeta(w)} · <a href="${esc(url)}" target="_blank" rel="noopener">Öffnen</a></div></div>
         <button type="button" class="icon-btn" id="btnChangeItem" title="Anderes Item wählen" aria-label="Anderes Item wählen">✕</button>
       </div>`;
   }
@@ -726,7 +726,7 @@ function showResult(wi, { created, comments, files, contentTarget }) {
     <div class="result">
       <h3>✅ Gespeichert in #${wi.id}</h3>
       <div><b>${esc(wi.title)}</b><br><span class="muted">${parts.join(' · ')}</span></div>
-      <div><a class="btn primary small" href="${esc(url)}" target="_blank" rel="noopener" data-open>In Azure DevOps öffnen ↗</a></div>
+      <div><a class="btn primary small" href="${esc(url)}" target="_blank" rel="noopener">In Azure DevOps öffnen ↗</a></div>
       ${demoHtml}
     </div>`;
   show('#result', true);
@@ -917,12 +917,8 @@ function wireUi() {
   $('#preview').addEventListener('keydown', (e) => { if (e.key === 'Enter' && selectionInPreview()) { e.preventDefault(); captureSelection(); } });
 
   $('#btnSubmit').addEventListener('click', submit);
-
-  // Links im Outlook-Fenster sauber im Browser öffnen
-  document.addEventListener('click', (e) => {
-    const a = e.target.closest('a[data-open]');
-    if (a && !S.demo) { e.preventDefault(); S.mailApi.openUrl(a.href); }
-  });
+  // Links (target="_blank") werden bewusst NICHT abgefangen: Outlook öffnet sie direkt im Standardbrowser.
+  // Office.context.ui.openBrowserWindow würde im neuen Outlook erst ein leeres Outlook-Fenster öffnen.
 }
 
 boot().catch((e) => { console.error(e); setStatus('Start fehlgeschlagen: ' + e.message, 'error'); });

@@ -87,7 +87,6 @@ export const demoMail = {
   getComposeSelection: async () => '<div>Markierter Text aus dem Editor (Demo)</div>',
   onItemChanged: () => {},
   userEmail: () => 'sie@muster.ch',
-  openUrl: (url) => window.open(url, '_blank', 'noopener'),
 };
 
 /* ------------------------------------------------------------ Mock-ADO */
