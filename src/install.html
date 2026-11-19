@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mail2DevOps installieren</title>
+  <link rel="icon" href="../assets/icon-32.png">
+  <style>
+    :root { --bg: #f5f5f5; --card: #fff; --text: #242424; --muted: #616161; --line: #e0e0e0; --brand: #0f6cbd; --brand-hover: #115ea3; --code: #f0f0f0; color-scheme: light; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) { --bg: #1b1b1b; --card: #262626; --text: #f0f0f0; --muted: #b3b3b3; --line: #3a3a3a; --brand: #479ef5; --brand-hover: #62abf5; --code: #333; color-scheme: dark; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 "Segoe UI", -apple-system, Roboto, sans-serif; }
+    main { max-width: 640px; margin: 0 auto; padding: 40px 16px; }
+    header { display: flex; gap: 14px; align-items: center; margin-bottom: 24px; }
+    header img { width: 48px; height: 48px; }
+    h1 { font-size: 24px; margin: 0; }
+    header p { margin: 2px 0 0; color: var(--muted); }
+    section { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 20px; margin-bottom: 14px; }
+    h2 { font-size: 16px; margin: 0 0 10px; }
+    ol { margin: 0; padding-left: 20px; }
+    li { margin: 6px 0; }
+    .btn { display: inline-block; background: #0f6cbd; color: #fff; text-decoration: none; font-weight: 600; padding: 10px 18px; border-radius: 4px; }
+    .btn:hover { background: #115ea3; }
+    a { color: var(--brand); }
+    code { background: var(--code); padding: 1px 6px; border-radius: 4px; font-size: 13px; word-break: break-all; }
+    .muted { color: var(--muted); font-size: 14px; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="../assets/icon-128.png" alt="">
+    <div><h1>Mail2DevOps</h1><p>E-Mails als Diskussion an Azure DevOps Work Items anhängen</p></div>
+  </header>
+
+  <section>
+    <h2>1. Manifest herunterladen</h2>
+    <p><a class="btn" href="../manifest.xml" download="Mail2DevOps-manifest.xml">⬇ Manifest herunterladen</a></p>
+    <p class="muted">Bitte diesen Button verwenden. Wird die Datei im Browser geöffnet und über „Speichern unter“ gespeichert, ist sie für Outlook unbrauchbar.</p>
+  </section>
+
+  <section>
+    <h2>2. In Outlook hinzufügen</h2>
+    <ol>
+      <li><a href="https://aka.ms/olksideload" target="_blank" rel="noopener">aka.ms/olksideload</a> öffnen (Outlook im Web).</li>
+      <li><b>Meine Add-Ins</b> → ganz unten <b>Benutzerdefinierte Add-Ins</b> → <b>Benutzerdefiniertes Add-In hinzufügen</b> → <b>Aus Datei hinzufügen</b>.</li>
+      <li>Die heruntergeladene <code>Mail2DevOps-manifest.xml</code> wählen und bestätigen.</li>
+      <li>Eine E-Mail öffnen → <b>An DevOps senden</b> (ggf. unter <b>Apps</b>). Im neuen und klassischen Outlook erscheint es ebenfalls.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>3. Einrichten</h2>
+    <p>Beim ersten Öffnen über das Zahnrad ⚙ die Azure DevOps Organisation und einen persönlichen Zugriffstoken (PAT) eintragen. Benötigte Rechte: <b>Work Items (Read &amp; Write)</b> und <b>Project and Team (Read)</b>.</p>
+  </section>
+
+  <section>
+    <h2>Für Admins</h2>
+    <p>Im <a href="https://admin.microsoft.com" target="_blank" rel="noopener">Microsoft 365 Admin Center</a> → <b>Einstellungen → Integrierte Apps → Benutzerdefinierte Apps hochladen</b> → Office-Add-In → „Link zur Manifestdatei angeben“:</p>
+    <p><code id="manifestUrl">manifest.xml</code></p>
+  </section>
+</main>
+<script>document.getElementById('manifestUrl').textContent = new URL('../manifest.xml', location.href).href;</script>
+</body>
+</html>

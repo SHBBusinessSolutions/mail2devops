@@ -177,7 +177,7 @@ function renderPreview() {
   if (!S.messages.length) { pv.innerHTML = '<div class="empty">Kein Inhalt</div>'; return; }
   pv.innerHTML = S.messages.map((m) => `
     <section class="msg" data-msg-index="${m.index}">
-      <div class="msg-head"><span>${esc(personName(m.meta.from) || 'Unbekannt')}</span><span>${esc(fmtDate(m.meta.date))}</span></div>
+      <div class="msg-head">${avatar(personName(m.meta.from))}<span class="msg-from">${esc(personName(m.meta.from) || 'Unbekannt')}</span><span class="msg-date">${esc(fmtDate(m.meta.date))}</span></div>
       <div class="msg-body">${m.html}</div>
     </section>`).join('');
   // cid:-Bilder bis zum Laden nicht als defekt anzeigen
@@ -229,13 +229,9 @@ function renderAttachments() {
 
 function renderContentHint() {
   const h = {
-    full: 'Die komplette E-Mail inkl. zitiertem Verlauf wird als <b>ein</b> Kommentar gespeichert.',
-    thread: S.messages.length > 1
-      ? `${S.messages.length} Nachrichten erkannt – jede ausgewählte wird ein <b>eigener Kommentar</b>, so entsteht die Diskussion in DevOps.`
-      : 'Es wurde nur eine Nachricht erkannt.',
-    selection: S.snippets.length
-      ? 'Markierte Ausschnitte werden als Zitate in einem Kommentar gespeichert.'
-      : 'Markiere Text in der Vorschau und klicke <b>＋ Übernehmen</b>. Mehrere Ausschnitte sind möglich.',
+    full: 'Die ganze E-Mail wird ein Kommentar.',
+    thread: S.messages.length > 1 ? 'Jede Nachricht wird ein eigener Kommentar.' : 'Nur eine Nachricht erkannt.',
+    selection: S.snippets.length ? 'Ausschnitte werden als Zitate gespeichert.' : 'Text in der Vorschau markieren, dann „Übernehmen“.',
   }[S.content];
   $('#contentHint').innerHTML = h;
 }
@@ -329,7 +325,7 @@ function renderOrgSelect() {
   const sel = $('#selOrg');
   sel.innerHTML = S.orgs.map((o) => `<option value="${esc(o.id)}">${esc(o.name || o.url)}</option>`).join('');
   sel.value = S.org ? S.org.id : '';
-  sel.disabled = S.orgs.length < 2;
+  show('#fieldOrg', S.orgs.length > 1);
   show('#setupNeeded', !S.orgs.length);
   show('#cardTarget', !!S.orgs.length);
 }
@@ -349,9 +345,11 @@ async function selectOrg(id) {
   S.projects = []; S.project = null;
   renderOrgSelect(); renderProjects(); renderWiList([]);
   updateSubmit();
+  show('#patMissing', !!(S.org && !S.org.pat));
+  show('#targetBody', !!(S.org && S.org.pat));
   if (!S.org) return;
   S.prefs.lastOrgId = S.org.id; persistPrefs();
-  if (!S.org.pat) { setStatus('Für diese Organisation fehlt noch ein PAT – bitte in den Einstellungen ⚙ ergänzen.', 'warn'); return; }
+  if (!S.org.pat) return;
   try {
     setStatus('Projekte werden geladen …');
     S.projects = await S.client.getProjects();
@@ -414,6 +412,22 @@ async function refreshSearch() {
   }
 }
 
+const TYPE_ABBR = { 'product backlog item': 'PBI', 'user story': 'US', task: 'T', bug: 'B', feature: 'F', epic: 'E', issue: 'I', requirement: 'R' };
+function typeIcon(type) {
+  const abbr = TYPE_ABBR[(type || '').toLowerCase()] || (type || '?').slice(0, 1).toUpperCase();
+  return `<span class="wi-type" style="--tc:${typeColor(type)}" title="${esc(type)}">${esc(abbr)}</span>`;
+}
+
+const AVATAR_COLORS = ['#0f6cbd', '#8764b8', '#038387', '#ca5010', '#4f6bed', '#c239b3', '#498205', '#986f0b'];
+function avatar(name) {
+  const n = (name || '?').trim();
+  const parts = n.replace(/[<(].*$/, '').split(/[\s,.]+/).filter(Boolean);
+  const ini = ((parts[0] || '?')[0] + (parts.length > 1 ? parts[parts.length - 1][0] : '')).toUpperCase();
+  let h = 0;
+  for (const c of n) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return `<span class="avatar" style="background:${AVATAR_COLORS[h % AVATAR_COLORS.length]}" aria-hidden="true">${esc(ini)}</span>`;
+}
+
 function wiMeta(w) {
   return [w.type, w.state, w.assignedTo, w.project && w.project !== S.project ? w.project : ''].filter(Boolean).map(esc).join(' · ');
 }
@@ -424,8 +438,8 @@ function renderWiList(items, q = '') {
   $('#wiList').innerHTML = items.length
     ? items.map((w) => `
       <button type="button" class="wi" data-id="${w.id}" role="option">
-        <span class="dot" style="background:${typeColor(w.type)}"></span>
-        <span class="wi-main"><span class="wi-title">#${w.id} ${esc(w.title)}</span><span class="wi-meta">${wiMeta(w)}</span></span>
+        ${typeIcon(w.type)}
+        <span class="wi-main"><span class="wi-title"><span class="wi-id">${w.id}</span> ${esc(w.title)}</span><span class="wi-meta">${wiMeta(w)}</span></span>
       </button>`).join('')
     : (q || S.client) ? `<div class="wi-empty">${q ? 'Keine Treffer.' : 'Keine Work Items gefunden.'}</div>` : '';
 }
@@ -438,9 +452,9 @@ function selectItem(w) {
     const url = S.client.webUrl(w.project || S.project, w.id);
     $('#wiSelected').innerHTML = `
       <div class="wi-sel">
-        <span class="dot" style="background:${typeColor(w.type)}"></span>
-        <div class="wi-main"><div class="wi-title">#${w.id} ${esc(w.title)}</div><div class="wi-meta">${wiMeta(w)}</div></div>
-        <div class="actions"><button type="button" class="link" id="btnChangeItem">Ändern</button><a href="${esc(url)}" target="_blank" rel="noopener" data-open>Öffnen ↗</a></div>
+        ${typeIcon(w.type)}
+        <div class="wi-main"><div class="wi-title"><span class="wi-id">${w.id}</span> ${esc(w.title)}</div><div class="wi-meta">${wiMeta(w)} · <a href="${esc(url)}" target="_blank" rel="noopener" data-open>Öffnen</a></div></div>
+        <button type="button" class="icon-btn" id="btnChangeItem" title="Anderes Item wählen" aria-label="Anderes Item wählen">✕</button>
       </div>`;
   }
   updateSubmit();
@@ -763,7 +777,7 @@ function editOrg(org) {
   $('#fPat').value = org ? org.pat || '' : '';
   $('#fSyncPat').checked = !!(org && org.syncPat);
   $('#fApi').value = org ? org.apiVersion || '7.1' : '7.1';
-  $('#fProject').innerHTML = `<option value="">– zuletzt verwendetes –</option>` + (org && org.defaultProject ? `<option selected>${esc(org.defaultProject)}</option>` : '');
+  $('#fProject').innerHTML = `<option value="">Zuletzt verwendetes</option>` + (org && org.defaultProject ? `<option selected>${esc(org.defaultProject)}</option>` : '');
   $('#testResult').textContent = '';
   updatePatLink();
   $('#orgForm').scrollIntoView({ behavior: 'smooth' });
@@ -799,7 +813,7 @@ async function testOrg() {
     const projects = await new AdoClient(o).getProjects();
     out.textContent = `✓ Verbunden – ${projects.length} Projekt(e) gefunden.`; out.className = 'status ok';
     const cur = $('#fProject').value;
-    $('#fProject').innerHTML = `<option value="">– zuletzt verwendetes –</option>` + projects.map((p) => `<option ${p.name === cur ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
+    $('#fProject').innerHTML = `<option value="">Zuletzt verwendetes</option>` + projects.map((p) => `<option ${p.name === cur ? 'selected' : ''}>${esc(p.name)}</option>`).join('');
   } catch (e) { out.textContent = e.message; out.className = 'status error'; }
 }
 
@@ -824,6 +838,7 @@ async function submitOrg(ev) {
 function wireUi() {
   $('#btnSettings').addEventListener('click', () => ($('#viewSettings').classList.contains('hidden') ? openSettings() : closeSettings()));
   $('#btnSetup').addEventListener('click', openSettings);
+  $('#btnPatFix').addEventListener('click', () => { openSettings(); if (S.org && !S.org.demo) editOrg(S.org); });
   $('#btnBack').addEventListener('click', closeSettings);
   $('#btnAddOrg').addEventListener('click', () => editOrg(null));
   $('#btnCancelOrg').addEventListener('click', () => show('#orgForm', false));

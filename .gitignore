@@ -2,3 +2,4 @@ node_modules/
 dist/
 manifest.prod.xml
 .impeccable/
+.claude/

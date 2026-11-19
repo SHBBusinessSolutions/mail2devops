@@ -11,97 +11,104 @@
 </head>
 <body>
 <div id="app">
-  <header class="topbar">
-    <svg class="logo" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="5" fill="#0078d4"/><path d="M5 8h14v9H5z" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/><path d="M5 8l7 5 7-5" fill="none" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
-    <div class="brand"><b>Mail2DevOps</b><span id="mailSubject" class="sub"></span></div>
+  <!-- Outlook zeigt den Add-in-Namen bereits an – hier nur Kontext + Einstellungen -->
+  <header class="toolbar">
+    <svg class="ctx-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5.5A1.5 1.5 0 0 1 4.5 4h11A1.5 1.5 0 0 1 17 5.5v9a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 3 14.5v-9Zm1.2.3v.2l5.8 3.9 5.8-3.9v-.2a.3.3 0 0 0-.3-.3h-11a.3.3 0 0 0-.3.3Zm11.6 1.6-5.5 3.7a.6.6 0 0 1-.6 0L4.2 7.4v7.1c0 .2.1.3.3.3h11c.2 0 .3-.1.3-.3V7.4Z" fill="currentColor"/></svg>
+    <span id="mailSubject" class="ctx-subject"></span>
     <button id="btnSettings" class="icon-btn" title="Einstellungen" aria-label="Einstellungen">
-      <svg viewBox="0 0 24 24"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
     </button>
   </header>
-  <div id="demoBanner" class="banner hidden">Demo-Modus – ausserhalb von Outlook geöffnet, Daten sind simuliert.</div>
+  <div id="demoBanner" class="msgbar hidden">Demo-Modus – Daten sind simuliert.</div>
 
   <!-- ===================================================== HAUPTANSICHT -->
   <main id="viewMain" class="view">
-    <div id="setupNeeded" class="card empty-state hidden">
-      <h2>Willkommen 👋</h2>
-      <p>Lege zuerst eine Azure DevOps Organisation mit Personal Access Token an.</p>
+    <div id="setupNeeded" class="empty-state hidden">
+      <h2>Mit Azure DevOps verbinden</h2>
+      <p>Organisation und persönlichen Zugriffstoken hinterlegen – dauert eine Minute.</p>
       <button id="btnSetup" class="btn primary">Organisation hinzufügen</button>
     </div>
 
-    <div id="linkedHint" class="notice hidden"></div>
+    <div id="linkedHint" class="msgbar info hidden"></div>
 
-    <section class="card" id="cardTarget">
-      <h2><span class="step">1</span> Ziel in Azure DevOps</h2>
-      <div class="grid2">
-        <label>Organisation<select id="selOrg"></select></label>
-        <label>Projekt<select id="selProject"></select></label>
-      </div>
-      <div class="seg" id="segTarget">
-        <button type="button" data-v="existing" class="active">Bestehendes Item</button>
-        <button type="button" data-v="new">Neues Item</button>
+    <section class="section" id="cardTarget">
+      <h2 class="section-title">Ziel</h2>
+      <div class="row2">
+        <label class="field" id="fieldOrg">Organisation<select id="selOrg"></select></label>
+        <label class="field">Projekt<select id="selProject"></select></label>
       </div>
 
-      <div id="paneExisting">
-        <div id="wiPicker">
-          <div class="combo">
-            <input id="wiSearch" type="search" placeholder="ID eingeben oder Titel suchen …" autocomplete="off">
-            <select id="wiFilter" title="Filter">
-              <option value="recent">Zuletzt geändert</option>
-              <option value="mine">Mir zugewiesen</option>
-              <option value="created">Von mir erstellt</option>
-            </select>
+      <div id="patMissing" class="msgbar warn hidden">
+        <span class="grow">Für diese Organisation fehlt noch der Zugriffstoken.</span>
+        <button type="button" class="btn subtle small" id="btnPatFix">Einrichten</button>
+      </div>
+
+      <div id="targetBody">
+        <div class="tabs" id="segTarget" role="tablist">
+          <button type="button" data-v="existing" class="active" role="tab">Bestehendes Item</button>
+          <button type="button" data-v="new" role="tab">Neues Item</button>
+        </div>
+
+        <div id="paneExisting">
+          <div id="wiPicker">
+            <div class="search">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8.5 3a5.5 5.5 0 0 1 4.4 8.8l3.9 3.9a.6.6 0 0 1-.9.9l-3.9-3.9A5.5 5.5 0 1 1 8.5 3Zm0 1.2a4.3 4.3 0 1 0 0 8.6 4.3 4.3 0 0 0 0-8.6Z" fill="currentColor"/></svg>
+              <input id="wiSearch" type="search" placeholder="ID oder Titel" autocomplete="off" aria-label="Work Item suchen">
+              <select id="wiFilter" aria-label="Filter">
+                <option value="recent">Zuletzt geändert</option>
+                <option value="mine">Mir zugewiesen</option>
+                <option value="created">Von mir erstellt</option>
+              </select>
+            </div>
+            <div id="wiList" class="wi-list" role="listbox"></div>
           </div>
-          <div id="wiList" class="wi-list" role="listbox"></div>
+          <div id="wiSelected" class="hidden"></div>
         </div>
-        <div id="wiSelected" class="hidden"></div>
-      </div>
 
-      <div id="paneNew" class="hidden">
-        <div class="lbl">Typ</div>
-        <div class="chips" id="typeChips"></div>
-        <label>Titel<input id="newTitle" type="text"></label>
-        <div class="grid2">
-          <label>Übergeordnet (ID)<input id="newParent" type="text" inputmode="numeric" placeholder="optional"></label>
-          <label>Tags<input id="newTags" type="text" placeholder="z.B. E-Mail; Kunde"></label>
+        <div id="paneNew" class="hidden">
+          <div class="chips" id="typeChips" role="radiogroup" aria-label="Typ"></div>
+          <label class="field">Titel<input id="newTitle" type="text"></label>
+          <div class="row2">
+            <label class="field">Übergeordnet<input id="newParent" type="text" inputmode="numeric" placeholder="ID (optional)"></label>
+            <label class="field">Tags<input id="newTags" type="text" placeholder="z.B. E-Mail"></label>
+          </div>
+          <label class="field">Inhalt ablegen in
+            <select id="newContentTarget">
+              <option value="comment">Diskussion</option>
+              <option value="description">Beschreibung</option>
+              <option value="both">Beschreibung und Diskussion</option>
+            </select>
+          </label>
+          <label class="check"><input type="checkbox" id="newAssignMe"> Mir zuweisen</label>
         </div>
-        <label>E-Mail-Inhalt ablegen in
-          <select id="newContentTarget">
-            <option value="comment">Diskussion (Kommentar)</option>
-            <option value="description">Beschreibung</option>
-            <option value="both">Beschreibung + Diskussion</option>
-          </select>
-        </label>
-        <label class="check"><input type="checkbox" id="newAssignMe"> Mir zuweisen</label>
       </div>
     </section>
 
-    <section class="card" id="cardContent">
-      <h2><span class="step">2</span> Was soll übertragen werden?</h2>
-      <div class="seg" id="segContent">
-        <button type="button" data-v="full" class="active">Ganze E-Mail</button>
-        <button type="button" data-v="thread">Verlauf <span id="msgCount" class="badge">1</span></button>
-        <button type="button" data-v="selection">Auswahl <span id="selCount" class="badge">0</span></button>
+    <section class="section" id="cardContent">
+      <h2 class="section-title">Inhalt</h2>
+      <div class="tabs" id="segContent" role="tablist">
+        <button type="button" data-v="full" class="active" role="tab">Ganze E-Mail</button>
+        <button type="button" data-v="thread" role="tab">Verlauf <span id="msgCount" class="count">1</span></button>
+        <button type="button" data-v="selection" role="tab">Auswahl <span id="selCount" class="count">0</span></button>
       </div>
       <p class="hint" id="contentHint"></p>
 
       <div id="threadList" class="thread-list hidden"></div>
       <div id="snippetList" class="snippet-list hidden"></div>
-      <button id="btnComposeSel" type="button" class="btn secondary small hidden">Markierung aus dem Editor übernehmen</button>
+      <button id="btnComposeSel" type="button" class="btn subtle small hidden">Markierung aus dem Editor übernehmen</button>
 
-      <details id="previewWrap" open>
-        <summary>Vorschau <span class="muted">– Text markieren und <b>＋ Übernehmen</b> klicken</span></summary>
-        <div id="preview" class="preview" tabindex="0"><div class="loading">E-Mail wird geladen …</div></div>
-      </details>
+      <div id="preview" class="preview" tabindex="0" aria-label="Vorschau der E-Mail"><div class="loading">E-Mail wird geladen …</div></div>
 
-      <label>Notiz (optional)<textarea id="note" rows="2" placeholder="z.B. Rückmeldung Kunde zum Release …"></textarea></label>
-
-      <details class="options">
-        <summary>Optionen &amp; Anhänge</summary>
-        <label class="check"><input type="checkbox" id="optHeader" checked> Kopfzeile mit Von / An / Datum</label>
-        <label class="check"><input type="checkbox" id="optImages" checked> Eingebettete Bilder übertragen</label>
-        <label class="check"><input type="checkbox" id="optOldestFirst" checked> Verlauf chronologisch posten (älteste zuerst)</label>
-        <label class="check" id="optEmlWrap"><input type="checkbox" id="optEml"> Original-E-Mail als .eml anhängen</label>
-        <div id="attList"></div>
+      <details class="more">
+        <summary>Notiz und Optionen</summary>
+        <div class="more-body">
+          <label class="field">Notiz<textarea id="note" rows="2" placeholder="Wird über dem Inhalt eingefügt"></textarea></label>
+          <label class="check"><input type="checkbox" id="optHeader" checked> Kopfzeile mit Von, An und Datum</label>
+          <label class="check"><input type="checkbox" id="optImages" checked> Eingebettete Bilder übertragen</label>
+          <label class="check"><input type="checkbox" id="optOldestFirst" checked> Verlauf: älteste Nachricht zuerst</label>
+          <label class="check" id="optEmlWrap"><input type="checkbox" id="optEml"> Original-E-Mail als .eml anhängen</label>
+          <div id="attList"></div>
+        </div>
       </details>
     </section>
 
@@ -111,48 +118,48 @@
   <!-- ===================================================== EINSTELLUNGEN -->
   <section id="viewSettings" class="view hidden">
     <div class="settings-head">
-      <button id="btnBack" type="button" class="link">← Zurück</button>
+      <button id="btnBack" type="button" class="icon-btn" title="Zurück" aria-label="Zurück">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.4 4.2a.6.6 0 0 1 0 .8L7.4 10l5 5a.6.6 0 1 1-.8.8l-5.4-5.4a.6.6 0 0 1 0-.8l5.4-5.4a.6.6 0 0 1 .8 0Z" fill="currentColor"/></svg>
+      </button>
       <h2>Einstellungen</h2>
     </div>
 
-    <div class="card">
-      <h3>Azure DevOps Organisationen</h3>
+    <section class="section">
+      <h2 class="section-title">Organisationen</h2>
       <div id="orgList"></div>
-      <button id="btnAddOrg" type="button" class="btn secondary small">＋ Organisation hinzufügen</button>
-    </div>
+      <div><button id="btnAddOrg" type="button" class="btn subtle small">＋ Organisation hinzufügen</button></div>
+    </section>
 
-    <form id="orgForm" class="card hidden" autocomplete="off">
-      <h3 id="orgFormTitle">Organisation</h3>
+    <form id="orgForm" class="section hidden" autocomplete="off">
+      <h2 class="section-title" id="orgFormTitle">Organisation</h2>
       <input type="hidden" id="fId">
-      <label>Anzeigename<input id="fName" type="text" placeholder="z.B. Contoso"></label>
-      <label>Organisations-URL<input id="fUrl" type="text" placeholder="https://dev.azure.com/meine-org" required></label>
-      <label>Personal Access Token<input id="fPat" type="password" autocomplete="new-password" placeholder="PAT einfügen"></label>
-      <p class="hint">Benötigte Scopes: <b>Work Items (Read &amp; Write)</b> und <b>Project and Team (Read)</b>.
-        <a id="patLink" href="https://dev.azure.com" target="_blank" rel="noopener">PAT erstellen ↗</a></p>
-      <label class="check"><input type="checkbox" id="fSyncPat"> PAT geräteübergreifend im Postfach speichern</label>
-      <div class="grid2">
-        <label>Standard-Projekt<select id="fProject"><option value="">– zuletzt verwendetes –</option></select></label>
-        <label>API-Version<select id="fApi"><option value="7.1">7.1 (Cloud)</option><option value="7.0">7.0 (Server 2022)</option><option value="6.0">6.0 (Server 2020)</option></select></label>
+      <label class="field">Organisations-URL<input id="fUrl" type="text" placeholder="https://dev.azure.com/meine-org" required></label>
+      <label class="field">Anzeigename<input id="fName" type="text" placeholder="optional"></label>
+      <label class="field">Persönlicher Zugriffstoken (PAT)<input id="fPat" type="password" autocomplete="new-password"></label>
+      <p class="hint">Rechte: Work Items (Read &amp; Write), Project and Team (Read). <a id="patLink" href="https://dev.azure.com" target="_blank" rel="noopener">Token erstellen</a></p>
+      <label class="check"><input type="checkbox" id="fSyncPat"> Token auf allen Geräten verwenden</label>
+      <div class="row2">
+        <label class="field">Standard-Projekt<select id="fProject"><option value="">Zuletzt verwendetes</option></select></label>
+        <label class="field">API-Version<select id="fApi"><option value="7.1">7.1 (Cloud)</option><option value="7.0">7.0 (Server 2022)</option><option value="6.0">6.0 (Server 2020)</option></select></label>
       </div>
       <div class="row-btns">
-        <button type="button" id="btnTest" class="btn secondary small">Verbindung testen</button>
-        <span class="spacer"></span>
-        <button type="button" id="btnCancelOrg" class="btn link">Abbrechen</button>
-        <button type="submit" class="btn primary small">Speichern</button>
+        <button type="submit" class="btn primary">Speichern</button>
+        <button type="button" id="btnTest" class="btn">Verbindung testen</button>
+        <button type="button" id="btnCancelOrg" class="btn subtle">Abbrechen</button>
       </div>
       <div id="testResult" class="status"></div>
     </form>
 
-    <div class="card">
-      <h3>Standards</h3>
-      <div class="grid2">
-        <label>Standard-Tags (neue Items)<input id="pTags" type="text"></label>
-        <label>Standard-Inhalt
+    <section class="section">
+      <h2 class="section-title">Standards</h2>
+      <div class="row2">
+        <label class="field">Tags für neue Items<input id="pTags" type="text"></label>
+        <label class="field">Inhalt
           <select id="pContent"><option value="full">Ganze E-Mail</option><option value="thread">Verlauf</option><option value="selection">Auswahl</option></select>
         </label>
       </div>
-    </div>
-    <p class="hint small">Organisationen und Einstellungen werden in Ihrem Postfach gespeichert (nur für dieses Add-in lesbar). PATs bleiben standardmässig nur auf diesem Gerät. Es werden keine Daten an Dritte gesendet – nur direkt an Ihre Azure DevOps Organisation.</p>
+    </section>
+    <p class="hint small">Einstellungen liegen in Ihrem Postfach, Tokens standardmässig nur auf diesem Gerät. Daten gehen ausschliesslich an Ihre Azure DevOps Organisation.</p>
   </section>
 
   <footer class="actionbar" id="actionbar">
@@ -160,7 +167,7 @@
     <button id="btnSubmit" type="button" class="btn primary block" disabled>Item auswählen</button>
   </footer>
 
-  <button id="selFab" type="button" class="fab hidden">＋ Übernehmen</button>
+  <button id="selFab" type="button" class="fab hidden">Übernehmen</button>
   <div id="toast" class="toast hidden"></div>
 </div>
 </body>

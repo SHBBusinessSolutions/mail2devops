@@ -12,10 +12,10 @@ fs.mkdirSync(dist, { recursive: true });
 for (const item of ['src', 'assets', 'config.json']) {
   fs.cpSync(path.join(root, item), path.join(dist, item), { recursive: true });
 }
-// Startseite: leitet auf den Task Pane weiter (nützlich für einen schnellen Test im Browser)
+// Startseite: leitet auf die Installationsseite weiter (Download-Button für das Manifest)
 fs.writeFileSync(
   path.join(dist, 'index.html'),
-  '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=src/taskpane.html"><title>Mail2DevOps</title><a href="src/taskpane.html">Mail2DevOps öffnen</a>\n'
+  '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=src/install.html"><title>Mail2DevOps</title><a href="src/install.html">Mail2DevOps installieren</a>\n'
 );
 const count = (d) => fs.readdirSync(d, { withFileTypes: true }).reduce((n, e) => n + (e.isDirectory() ? count(path.join(d, e.name)) : 1), 0);
 console.log(`dist/ erstellt (${count(dist)} Dateien)`);

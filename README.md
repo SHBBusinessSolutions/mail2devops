@@ -59,7 +59,7 @@ Der Workflow [.github/workflows/pages.yml](.github/workflows/pages.yml) baut das
 1. Neues GitHub-Repository anlegen und das Projekt pushen. Für Pages im Free-Plan muss es **public** sein. Das ist unkritisch: Im Code stehen keine Geheimnisse, PATs bleiben bei den Benutzern. Org-URLs in `config.json` wären öffentlich sichtbar.
 2. Im Repo **Settings → Pages → Source: GitHub Actions** wählen.
 3. Nach dem ersten Lauf (Tab *Actions*) ist das Add-in erreichbar unter `https://<user>.github.io/<repo>/`.
-4. Das passende Manifest herunterladen: `https://<user>.github.io/<repo>/manifest.xml`. Dann sideloaden oder im Admin Center verteilen.
+4. Installationsseite mit Download-Button: `https://<user>.github.io/<repo>/` (leitet auf `src/install.html` weiter). Das Manifest **nicht** im Browser öffnen und per „Speichern unter“ sichern – dabei entsteht eine kaputte Datei.
 5. Optional prüfen: `npm run check-host -- https://<user>.github.io/<repo>`
 
 Updates: einfach pushen. Die URL bleibt gleich, das Manifest muss nicht neu verteilt werden (ausser es ändert sich selbst, z.B. die Version).
